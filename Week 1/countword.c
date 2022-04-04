@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#define max_len 100
+#define max_length 100
 #define max_num 1000
 
 void word_check(char *word) // Chuyển đổi chữ hoa thành chữ thường và xoá kí tự lạ
@@ -20,10 +20,11 @@ void word_check(char *word) // Chuyển đổi chữ hoa thành chữ thường 
         }
         if (word[i] >= 'A' && word[i] <= 'Z')
         {
-            word[i] -= ('A' - 'a');
+            word[i] += 32;
         }
     }
 }
+
 int isName(char *word, char *word_prev)
 {
     char c = word[0];
@@ -37,10 +38,10 @@ int isName(char *word, char *word_prev)
     return 0;
 }
 
-void updaterow(FILE *ptr, int *row)
+void updaterow(FILE *fin, int *row)
 {
     char c;
-    fscanf(ptr, "%c", &c); // Check kí tự tiếp theo có phải là '\n' không
+    fscanf(fin, "%c", &c); // Check kí tự tiếp theo có phải là '\n' không
     if (c == '\n')
     { // Neu c == '\n' thì tăng biến đếm dòng lên 1
         (*row)++;
@@ -49,48 +50,48 @@ void updaterow(FILE *ptr, int *row)
 
 int main()
 {
-    FILE *ptr, *ptr_stop;
-    char word_prev[max_len];
-    char word[max_len];
-    char words[max_num][max_len];
-    char words_stop[max_num][max_len];
-    char words_prev[max_num][max_len];
+    FILE *fin, *fin_stop;
+    char word_prev[max_length];
+    char word[max_length];
+    char words[max_num][max_length];
+    char words_stop[max_num][max_length];
+    char words_prev[max_num][max_length];
     char c;
     int words_count[max_num] = {0};
-    int words_index[max_num][max_len] = {0};
+    int words_index[max_num][max_length] = {0};
     int i, j, index;
     int count = 0, count_stop = 0, row = 1;
-    ptr = fopen("vanban.txt", "r");
-    if (ptr == NULL)
+    fin = fopen("vanban.txt", "r");
+    if (fin == NULL)
     {
         printf("Can not open file vanban.txt!\n");
         return 1;
     }
-    ptr_stop = fopen("stopw.txt", "r");
-    if (ptr_stop == NULL)
+    fin_stop = fopen("stopw.txt", "r");
+    if (fin_stop == NULL)
     {
         printf("Can not open file stopw.txt!\n");
         return 1;
     }
 
     // Đọc file stopw.txt và lưu danh sách từ vào mảng words_stop
-    while (fscanf(ptr_stop, "%s", word) == 1)
+    while (fscanf(fin_stop, "%s", word) == 1)
     {
         strcpy(words_stop[count_stop++], word);
     }
     //
 
     // Thiết lập word_prev
-    fscanf(ptr, "%s", word_prev);
-    fseek(ptr, 0, SEEK_SET);
+    fscanf(fin, "%s", word_prev);
+    fseek(fin, 0, SEEK_SET);
     //
 
-    while (fscanf(ptr, "%s", word) == 1)
+    while (fscanf(fin, "%s", word) == 1)
     {
         // Check tên riêng
         if (isName(word, word_prev) == 1)
         {
-            updaterow(ptr, &row);
+            updaterow(fin, &row);
             strcpy(word_prev, word);
             continue;
         }
@@ -101,7 +102,7 @@ int main()
         word_check(word);
         //
         if(strlen(word) ==0) {          //Nếu word là 1 số hoặc 1 dãy full kí tự lạ thì strlen = 0
-            updaterow(ptr, &row);
+            updaterow(fin, &row);
             continue;
         }
         // Check words_stop
@@ -116,7 +117,7 @@ int main()
         }
         if (j == 1)
         {
-            updaterow(ptr, &row);
+            updaterow(fin, &row);
             continue;
         }
 
@@ -140,7 +141,7 @@ int main()
         else
         {
             words_count[i]++; // Neu da co thi words_count++
-            for (j = 0; j < max_len; j++)
+            for (j = 0; j < max_length; j++)
             {
                 if (words_index[i][j] == 0) // Mảng word_index ban đầu toàn là số 0. => số khác 0 đầu tiên chính là index đã được ghi trước đó
                 {
@@ -153,7 +154,7 @@ int main()
                 }
             }
         }
-        updaterow(ptr, &row);
+        updaterow(fin, &row);
     }
 
     // Sắp xếp lại mảng theo thứ tự từ điển bằng bubble sort
@@ -194,7 +195,7 @@ int main()
         }
         printf("\n");
     }
-    fclose(ptr);
-    fclose(ptr_stop);
+    fclose(fin);
+    fclose(fin_stop);
     return 0;
 }
