@@ -4,9 +4,48 @@
 #define max_len 100
 #define max_num 1000
 
-void word_normalize(char *word);
-int isName(char *word, char *word_prev);
-void updaterow(FILE *ptr, int *row);
+void word_check(char *word) // Chuyển đổi chữ hoa thành chữ thường và xoá kí tự lạ
+{
+    int i, j;
+    for (i = 0; i < strlen(word); i++)
+    {
+        if (!((word[i] >= 'A' && word[i] <= 'Z') || (word[i] >= 'a' && word[i] <= 'z')))
+        {
+            for (j = i; j < strlen(word); j++)
+            {
+                word[j] = word[j + 1];
+            }
+            i--;
+            continue;
+        }
+        if (word[i] >= 'A' && word[i] <= 'Z')
+        {
+            word[i] -= ('A' - 'a');
+        }
+    }
+}
+int isName(char *word, char *word_prev)
+{
+    char c = word[0];
+    if (c >= 'A' && c <= 'Z')
+    {
+        if (word_prev[strlen(word_prev) - 1] == '.')
+        {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+void updaterow(FILE *ptr, int *row)
+{
+    char c;
+    fscanf(ptr, "%c", &c); // Check kí tự tiếp theo có phải là '\n' không
+    if (c == '\n')
+    { // Neu c == '\n' thì tăng biến đếm dòng lên 1
+        (*row)++;
+    }
+}
 
 int main()
 {
@@ -59,7 +98,7 @@ int main()
 
         strcpy(word_prev, word);
         // Chuẩn hoá word
-        word_normalize(word);
+        word_check(word);
         //
         if(strlen(word) ==0) {          //Nếu word là 1 số hoặc 1 dãy full kí tự lạ thì strlen = 0
             updaterow(ptr, &row);
@@ -158,47 +197,4 @@ int main()
     fclose(ptr);
     fclose(ptr_stop);
     return 0;
-}
-
-void word_normalize(char *word) // Chuyển đổi chữ hoa thành chữ thường và xoá kí tự lạ
-{
-    int i, j;
-    for (i = 0; i < strlen(word); i++)
-    {
-        if (!((word[i] >= 'A' && word[i] <= 'Z') || (word[i] >= 'a' && word[i] <= 'z')))
-        {
-            for (j = i; j < strlen(word); j++)
-            {
-                word[j] = word[j + 1];
-            }
-            i--;
-            continue;
-        }
-        if (word[i] >= 'A' && word[i] <= 'Z')
-        {
-            word[i] -= ('A' - 'a');
-        }
-    }
-}
-int isName(char *word, char *word_prev)
-{
-    char c = word[0];
-    if (c >= 'A' && c <= 'Z')
-    {
-        if (word_prev[strlen(word_prev) - 1] == '.')
-        {
-            return 1;
-        }
-    }
-    return 0;
-}
-
-void updaterow(FILE *ptr, int *row)
-{
-    char c;
-    fscanf(ptr, "%c", &c); // Check kí tự tiếp theo có phải là '\n' không
-    if (c == '\n')
-    { // Neu c == '\n' thì tăng biến đếm dòng lên 1
-        (*row)++;
-    }
 }
