@@ -49,28 +49,22 @@ void skipComment() // nhận xét *    *
   }
 }
 
-Token *readIdentKeyword(void)
-{
+Token* readIdentKeyword(void) {
+  // TODO
   int i = 0;
   Token *token = makeToken(TK_IDENT, lineNo, colNo);
-  while ((charCodes[currentChar] == CHAR_LETTER) || (charCodes[currentChar] == CHAR_DIGIT))
-  {
-    if (currentChar)
-    {
-      token->string[i] = currentChar;
-      token->string[i + 1] = '\0';
-      readChar();
-    }
-    TokenType type = checkKeyword(token->string);
-    if (type == TK_NONE)
-    {
-      return token;
-    }
-    else
-    {
-      token->tokenType = type;
-      return token;
-    }
+  while((charCodes[currentChar] == CHAR_LETTER) || (charCodes[currentChar] == CHAR_DIGIT)){
+    if(currentChar)
+    token->string[i] = currentChar;
+    token->string[++i] = '\0';
+    readChar();
+  }
+  TokenType type = checkKeyword(token->string);
+  if (type == TK_NONE){
+    return token;
+  } else {
+    token->tokenType = type;
+    return token;
   }
 }
 
@@ -81,7 +75,7 @@ Token *readNumber(void)
   while (charCodes[currentChar] == CHAR_DIGIT)
   {
     token->string[i] = currentChar;
-    token->string[i + 1] == '\0';
+    token->string[i + 1] = '\0';
     readChar();
   }
   token->value = atoi(token->string);
@@ -128,7 +122,7 @@ Token *readConstChar(void)
 Token *getToken(void)
 {
   Token *token;
-  int ln, cn;
+  //int ln, cn;
 
   if (currentChar == EOF)
     return makeToken(TK_EOF, lineNo, colNo);
