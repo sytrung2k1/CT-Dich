@@ -29,7 +29,7 @@ void skipBlank()
 void skipComment() // nhận xét *    *
 {
   readChar();
-  while (charCodes[currentChar] != CHAR_TIME && (currentChar != EOF))
+  while (charCodes[currentChar] != CHAR_TIMES && (currentChar != EOF))
   {
     readChar();
   }
